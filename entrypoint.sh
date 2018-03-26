@@ -7,4 +7,9 @@ fi
 chown -R $USER_ID /dehydrated
 export HOME=/dehydrated
 
-exec /usr/local/bin/gosu "$USER_ID" dockerize -template config.tmpl:config /bin/bash dehydrated -t dns-01 -k hooks/cloudflare/hook.py $@
+if [ "$FORCE_RENEW" = "true" ]; then
+    force_flag='--force'
+else
+    force_flag=''
+
+exec /usr/local/bin/gosu "$USER_ID" dockerize -template config.tmpl:config /bin/bash dehydrated $force_flag -t dns-01 -k hooks/cloudflare/hook.py $@
